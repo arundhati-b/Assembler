@@ -6,6 +6,7 @@ A 2-pass Assembler written in Python for a 12-bit accumulator architecture as pa
 $ git clone https://github.com/arundhati-b/Assembler.git
 $ python Assembler/assembler.py < [input-file-name].txt
 ```
+Output code will appear in file bin.txt
 
 ## Supported instructions
 
