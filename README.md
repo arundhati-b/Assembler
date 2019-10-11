@@ -4,8 +4,7 @@ A 2-pass Assembler written in Python for a 12-bit accumulator architecture as pa
 ## To run
 ```
 $ git clone https://github.com/arundhati-b/Assembler.git
-$ cd Assembler/
-$ assembler.py < [input-file-name].txt
+$ python Assembler/assembler.py < [input-file-name].txt
 ```
 
 ## Supported instructions
