@@ -143,6 +143,7 @@ def passOne():
 ##CODE BEGINS HERE##
 
 code = []
+mcode=[]
 
 labelTable = {} #Table that stores Label addresses { label : locationAddress }
 symbolTable = {} #Table that stores variables in format { variable : [value,locationAddress,size] }
@@ -158,8 +159,44 @@ lineCtr = 0
 code = passOne()
 # print(code)
 
+for line in code:
+  separate=line.split()
+  if separate[0] in opcodeTable.keys():
+    temp=opcodeTable[separate[0]]
+    mcode.append(temp[0])
+    if(temp[2]==1):
+      if( len(separate)==2):
+        if(separate[1] in symbolTable.keys()):
+          addr=bin(symbolTable[separate[1]][1])[2:]
+          while(len(addr)<8):
+            addr='0'+addr
+          mcode[-1]+=addr
+        elif(separate[1] in labelTable.keys()):
+          addr=bin(labelTable[separate[1]])[2:]
+          while(len(addr)<8):
+            addr='0'+addr
+          mcode[-1]+=addr
+        else:
+          print(separate[1])
+          pass
+          # throw symbol not found exception
+      elif(len(separate==1)):
+        pass
+        # throw too less operands exception
+      else:
+        pass
+        #throw too many operands exception
+    if(temp[2]==0):
+      mcode[-1]+='00000000'
+      if(len(separate)>1):
+        # throw too many operands exception
+        pass
+  else:
+    pass 
 
-# print(labelTable)
-# print(symbolTable)
+for x in mcode:
+  print(x)
+print(labelTable)
+print(symbolTable)
 # print(opcodeTable)
 # print(literalTable)
