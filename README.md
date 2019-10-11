@@ -3,8 +3,9 @@ A 2-pass Assembler written in Python for a 12-bit accumulator architecture as pa
 
 ## To run
 ```
-> git clone https://github.com/arundhati-b/Assembler.git
-> assembler.py < [input-file-name].txt
+$ git clone https://github.com/arundhati-b/Assembler.git
+$ cd Assembler/
+$ assembler.py < [input-file-name].txt
 ```
 
 ## Supported instructions
@@ -28,11 +29,11 @@ A 2-pass Assembler written in Python for a 12-bit accumulator architecture as pa
 Precede the comment by `//`
 ```
 //This is a comment
-**CLA** // CLears Accumulator
+CLA // CLears Accumulator
 ```
 
 #### Labels
-Succeed label name by a `:`
+Follow label name by a `:`
 ```
 lbl1: STP
 ```
