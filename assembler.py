@@ -1,13 +1,31 @@
-import sys
+import sys,re
 
 def addLabel(label,LC):
-  labelTable[label] = LC
+  if isDuplicateLabel(label):
+    #throw label has been define before error
+    print()
+  else:
+    labelTable[label] = LC
 
 def addOpcode(opcode, opcodeBin, size, instructionClass):
-  opcodeTable[opcode] = [opcodeBin, size, instructionClass]
+  if list(opcodeTable.keys()).count(opcode) == 0:
+    opcodeTable[opcode] = [opcodeBin, size, instructionClass]
 
 def addSymbol(variable,value,size):
-  symbolTable[variable] = [value,None,size]
+  if isDuplicateSymbol(variable):
+    #throw symbol has been defined more than once error
+    print()
+  else:
+    symbolTable[variable] = [value,None,size]
+
+def addLiteral(literal):
+  if list(literalTable.keys()).count(literal) == 0:
+    value = literal[2:-1]
+    if not value.isdigit():
+      #throw invalid literal error
+      return
+    literalTable[literal] = [int(value),None,12]
+
 
 def extractOpcode(line):
   # print(line)
@@ -45,6 +63,12 @@ def extractOpcode(line):
       return
     addSymbol(variable,value,size)
 
+def extractLiteral(line):
+  tokens = line.split()
+  for s in tokens:
+    if s[:2] == "'=" and s[-1] == "'":
+      addLiteral(s)
+
 def checkLabel(line):
   label = ''
   i = line.find(':')
@@ -75,29 +99,48 @@ def removeComment(line):
     return line
   return line[:i].strip()
 
-def assignAddressToVariables(LC):
+def isDuplicateSymbol(variable):
+  if list(symbolTable.keys()).count(variable) > 0:
+    return True
+  return False
+
+def isDuplicateLabel(label):
+  if list(labelTable.keys()).count(label) > 0:
+    return True
+  return False
+
+def assignAddressToVariablesAndLiterals(LC):
   for i in symbolTable:
     symbolTable[i][1] = LC
     LC += symbolTable[i][2]
+  for i in literalTable:
+    literalTable[i][1] = LC
+    LC += literalTable[i][2]
 
 def passOne():
   lineCtr = 0
   locationCounter = 0
+  cleanedCode = []
 
   for line in code:
     lineCtr += 1
     if isComment(line):
       continue
     line = removeComment(line)
-    print(line)
+    # print(line)
     label, line = checkLabel(line)
     if label != '':
       addLabel(label,locationCounter)
+    cleanedCode.append(line)
     extractOpcode(line)
+    extractLiteral(line)
     locationCounter += 12
+  assignAddressToVariablesAndLiterals(locationCounter)
+  return cleanedCode
 
-  assignAddressToVariables(locationCounter)
 
+
+##CODE BEGINS HERE##
 
 code = []
 
@@ -112,10 +155,11 @@ for line in sys.stdin:
   code.append(line.strip())
 
 lineCtr = 0
-passOne()
+code = passOne()
+# print(code)
 
 
 # print(labelTable)
 # print(symbolTable)
 # print(opcodeTable)
-
+# print(literalTable)
