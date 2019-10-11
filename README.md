@@ -1,5 +1,5 @@
 # Assembler
-A 2-pass Assembler written in Python for a 12-bit accumulator architecture as part of our Computer Organisation course
+A 2-pass Assembler written in Python for a 12-bit accumulator architecture as part of my Computer Organisation course
 
 ## To run
 ```
