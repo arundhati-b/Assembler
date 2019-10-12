@@ -26,40 +26,39 @@ def addLiteral(literal):
       return
     literalTable[literal] = [int(value),None,12]
 
-
 def extractOpcode(line):
   # print(line)
-  if line.upper().find('CLA') >= 0:
+  tokens = line.upper().split()
+  if tokens.count('CLA') == 1:
     addOpcode('CLA','0000',12,0)
-  elif line.upper().find('LAC') >= 0:
+  elif tokens.count('LAC') == 1:
     addOpcode('LAC','0001',12,1)
-  elif line.upper().find('SAC') >= 0:
+  elif tokens.count('SAC') == 1:
     addOpcode('SAC','0010',12,1)
-  elif line.upper().find('ADD') >= 0:
+  elif tokens.count('ADD') == 1:
     addOpcode('ADD','0011',12,1)
-  elif line.upper().find('SUB') >= 0:
+  elif tokens.count('SUB') == 1:
     addOpcode('SUB','0100',12,1)
-  elif line.upper().find('BRZ') >= 0:
+  elif tokens.count('BRZ') == 1:
     addOpcode('BRZ','0101',12,1)
-  elif line.upper().find('BRN') >= 0:
+  elif tokens.count('BRN') == 1:
     addOpcode('BRN','0110',12,1)
-  elif line.upper().find('BRP') >= 0:
+  elif tokens.count('BRP') == 1:
     addOpcode('BRP','0111',12,1)
-  elif line.upper().find('INP') >= 0:
+  elif tokens.count('INP') == 1:
     addOpcode('INP','1000',12,1)
-  elif line.upper().find('DSP') >= 0:
+  elif tokens.count('DSP') == 1:
     addOpcode('DSP','1001',12,1)
-  elif line.upper().find('MUL') >= 0:
+  elif tokens.count('MUL') == 1:
     addOpcode('MUL','1010',12,1)
-  elif line.upper().find('DIV') >= 0:
+  elif tokens.count('DIV') == 1:
     addOpcode('DIV','1011',12,1)
-  elif line.upper().find('STP') >= 0:
+  elif tokens.count('STP') == 1:
     addOpcode('STP','1100',12,0)
   else:
     variable, value, size = checkPseudoinstruction(line)
     if variable == None:
-      #throw error
-      print("error line: "+line)
+      #throw unknown opcode error
       return
     addSymbol(variable,value,size)
 
@@ -78,15 +77,19 @@ def checkLabel(line):
   return label, line
 
 def checkPseudoinstruction(line):
-  i = line.upper().find('DW')
-  if i == -1:
+  tokens = line.upper().split()
+  i = tokens.count('DW')
+  if i == 0:
     return None, None, None
-  variable = line[:i].strip()
-  value = line[i+2:].strip()
-  if not value.isdigit():
-    #throw error
+  if i > 1 or len(tokens) > 3:
+    #throw too many opcodes or operands error
     return None,None,None
-  return variable, value, 12
+  variable = tokens[0].strip()
+  value = tokens[2].strip()
+  if not value.isdigit():
+    #throw wrong operand error
+    return None,None,None
+  return variable, int(value), 12
 
 def isComment(line):
   if line.find("//") == 0:
@@ -145,6 +148,7 @@ def passTwo():
     if separate[0] in opcodeTable.keys():
       temp=opcodeTable[separate[0]]
       mcode.append(temp[0])
+      # mcode[-1]+=' '
       if(temp[2]==1):
         if( len(separate)==2):
           if(separate[1] in symbolTable.keys()):
@@ -188,9 +192,8 @@ def passTwo():
   file=open("bin.txt","w+")
   for x in mcode:
     file.write(x+"\n")
+    print(x[:4]+" "+x[4:])
   file.close()
-  for x in mcode:
-    print(x)
 
 ##CODE BEGINS HERE##
 
