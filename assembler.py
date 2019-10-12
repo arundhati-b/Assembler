@@ -138,6 +138,7 @@ def passOne():
   assignAddressToVariablesAndLiterals(locationCounter)
   return cleanedCode
 
+
 def passTwo():
   for line in code:
     separate=line.split()
@@ -156,8 +157,19 @@ def passTwo():
             while(len(addr)<8):
               addr='0'+addr
             mcode[-1]+=addr
+          elif (separate[1] in literalTable.keys()):
+            # print("lit")
+            addr=bin(literalTable[separate[1]][1])[2:]
+            while(len(addr)<8):
+              addr='0'+addr
+            mcode[-1]+=addr
+          elif(separate[1].isnumeric()):
+            addr=bin(int(separate[1]))[2:]
+            while(len(addr)<8):
+              addr='0'+addr
+            mcode[-1]+=addr
           else:
-            print(separate[1])
+            # print(separate[1])
             pass
             # throw symbol not found exception
         elif(len(separate==1)):
@@ -173,7 +185,10 @@ def passTwo():
           pass
     else:
       pass
-
+  file=open("bin.txt","w+")
+  for x in mcode:
+    file.write(x+"\n")
+  file.close()
   for x in mcode:
     print(x)
 
