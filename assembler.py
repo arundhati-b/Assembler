@@ -143,7 +143,9 @@ def passOne():
 
 
 def passTwo():
+  p2counter=0
   for line in code:
+    p2counter+=1
     separate=line.split()
     if separate[0] in opcodeTable.keys():
       temp=opcodeTable[separate[0]]
@@ -174,25 +176,34 @@ def passTwo():
             mcode[-1]+=addr
           else:
             # print(separate[1])
-            pass
+            errorTable.append([p2counter,separate[1]+" Symbol Not Found"])
             # throw symbol not found exception
         elif(len(separate==1)):
+          errorTable.append([p2counter,"Too Less Operands Needed:0 Given:"+str(len(separate)-1)])
           pass
           # throw too less operands exception
         else:
           pass
+          errorTable.append([p2counter,"Too Many Operands Needed:1 Given:"+str(len(separate)-1)])
           #throw too many operands exception
       if(temp[2]==0):
         mcode[-1]+='00000000'
         if(len(separate)>1):
+          errorTable.append([p2counter,"Too Many Operands Needed:0 Given:"+str(len(separate)-1)])
           # throw too many operands exception
           pass
+    elif separate[0] in symbolTable.keys():
+      pass
     else:
+      errorTable.append([p2counter,separate[0]+" invalid Opcode"])
       pass
   file=open("bin.txt","w+")
   for x in mcode:
     file.write(x+"\n")
     print(x[:4]+" "+x[4:])
+  if len(errorTable)>0:
+    for e in errorTable:
+      file.write("Error at Line "+str(e[0])+": "+e[1]+"\n")
   file.close()
 
 ##CODE BEGINS HERE##
@@ -200,6 +211,8 @@ def passTwo():
 code = []
 mcode=[]
 
+
+errorTable=[] #Table that stores Errors [[lineNo,Error Description]]
 labelTable = {} #Table that stores Label addresses { label : locationAddress }
 symbolTable = {} #Table that stores variables in format { variable : [value,locationAddress,size] }
 opcodeTable = {} #Table that stores opcodes occuring in the program in format { opcode : [binaryCodeForOpcode, size, inctructionClass] }
