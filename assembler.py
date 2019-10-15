@@ -85,9 +85,9 @@ def checkPseudoinstruction(lineNum,line):
   i = tokens.count('DW')
   if i == 0:
     return None, None, None
-  # if i > 1 or len(tokens) > 3:
-  #   #throw too many opcodes or operands error; handled in pass 2
-  #   return None,None,None
+  if i > 1 or len(tokens) > 3:
+    #throw too many opcodes or operands error;
+    errorTable.append([lineNum,"Too many operands"])
   variable = tokens[0].strip()
   if variable.isdigit():
     errorTable.append([lineNum,"Variable cannot be a numeric value or start with a digit"])
@@ -223,7 +223,7 @@ def passTwo():
 code = [] #Stores code in the format [lineNumber, line]
 mcode = [] #Machine code
 
-hasError = [] #List that stores value True against a line number having an error to prevent those lines marked True in Pass one from being evaluated for errors again
+# hasError = [] #List that stores value True against a line number having an error to prevent those lines marked True in Pass one from being evaluated for errors again
 errorTable=[] #Table that stores Errors [[lineNo,Error Description]]
 labelTable = {} #Table that stores Label addresses { label : locationAddress }
 symbolTable = {} #Table that stores variables in format { variable : [value,locationAddress,size] }
@@ -231,12 +231,12 @@ opcodeTable = {} #Table that stores opcodes occuring in the program in format { 
 # Instruction class = 0 for 0 operand Instructions and 1 for Instructions with one operand
 literalTable = {}
 
-hasError.append(False)
+# hasError.append(False)
 i = 0
 for line in sys.stdin:
   i+=1
   code.append([i,line.strip()])
-  hasError.append(False)
+  # hasError.append(False)
 
 
 # lineCtr = 0
