@@ -50,26 +50,26 @@ Format: `'=*'`
 ADD '=1'
 ```
 #### Error
-The code can handle the follwoing errors:  
+The code can handle the following errors:  
 
-  *1 byte literal overflow  
-  *Symbol has been defined more than once  
-  *Label cannot be used as a variable  
-  *#Given Label is a Reserved keyword; Cannot be declared as Variable  
-  *Invalid Literal used  
-  *Too many opcodes or operands  
-  *Variable cannot be a numeric value or start with a digit  
-  *Wrong operand type; Only numeric values permitted  
-  *1 byte datatype overflow  
-  *Address overflow  
-  *Label has been defined more than once  
-  *Variable cannot be used as a Label  
-  *#GivenLabel is a Reserved keyword; Cannot be used as Label  
-  *#GivenSymbol is a reserved keyword; cannot be used as symbol  
-  *#GivenSymbol Symbol used but not defined  
-  *#GivenVariable is a Reserved keyword; Cannot be used as Variable  
-  *Too less Operands; Needed:#Needed; Given: #Given  
-  *Too many Operands; Needed:#Needed; Given: #Given  
-  *#WrongOpcode Opcode used is not a legal Opcode  
+  * 1 byte literal overflow  
+  * Symbol has been defined more than once  
+  * Label cannot be used as a variable  
+  * #Given Label is a Reserved keyword; Cannot be declared as Variable  
+  * Invalid Literal used  
+  * Too many opcodes or operands  
+  * Variable cannot be a numeric value or start with a digit  
+  * Wrong operand type; Only numeric values permitted  
+  * 1 byte datatype overflow  
+  * Address overflow  
+  * Label has been defined more than once  
+  * Variable cannot be used as a Label  
+  * #GivenLabel is a Reserved keyword; Cannot be used as Label  
+  * #GivenSymbol is a reserved keyword; cannot be used as symbol  
+  * #GivenSymbol Symbol used but not defined  
+  * #GivenVariable is a Reserved keyword; Cannot be used as Variable  
+  * Too less Operands; Needed:#Needed; Given: #Given  
+  * Too many Operands; Needed:#Needed; Given: #Given  
+  * #WrongOpcode Opcode used is not a legal Opcode  
 
 
