@@ -3,14 +3,14 @@ INP I //adding stuffs
 // test comment with whitespaces; should be ignored
 INP J
 LAC I
-SUB '=12'
+SUB '=2'
 BRN L1
 DSP 156
-CLA
+CLA 123
 BRZ L2
 L1: DSP J
 CLA
 BRZ L2
 L2: STP
-I DW 4
-J DW 5
+I DW 4 4
+J DW 23 23
