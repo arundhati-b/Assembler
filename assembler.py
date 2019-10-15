@@ -288,6 +288,9 @@ for line in sys.stdin:
   code.append([i,line.strip()])
   # hasError.append(False)
 
+if code[-1][1].upper().find("STP") == -1:
+  errorTable.append([code[-1][0],"STP should be the last instruction in the code"])
+
 
 # lineCtr = 0
 code = passOne()
