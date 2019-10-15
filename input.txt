@@ -4,13 +4,22 @@ INP I //adding stuffs
 INP J
 LAC I
 SUB '=2'
-BRN L1
-DSP 156
+BRN L2
+DSP BRZ
 CLA
 BRZ L2
-L1: DSP J
+CLA: DSP J
 CLA
 BRZ L2
 L2: STP
-I DW 4 4
-J DW 23
+INP DW 4
+J DW 
+
+
+
+
+
+
+
+
+

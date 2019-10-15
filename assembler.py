@@ -2,10 +2,16 @@ import sys,re
 
 def addLabel(label,LC):
   if isDuplicateLabel(label):
+    return 0
     #throw label has been define before error
-    print()
+  elif isDuplicateSymbol(label):
+    return 2
+  elif label in reservedKeywords:
+    labelTable[label] = LC
+    return 3
   else:
     labelTable[label] = LC
+    return 1
 
 def addOpcode(opcode, opcodeBin, size, instructionClass):
   if list(opcodeTable.keys()).count(opcode) == 0:
@@ -13,10 +19,17 @@ def addOpcode(opcode, opcodeBin, size, instructionClass):
 
 def addSymbol(variable,value,size):
   if isDuplicateSymbol(variable):
+    return 0
     #throw symbol has been defined more than once error
-    pass
+  elif isDuplicateLabel(variable):
+    return 2
+  elif variable in reservedKeywords:
+    symbolTable[variable] = [value,None,size]
+    # print(symbolTable.keys(),"sjrg")
+    return 3
   else:
     symbolTable[variable] = [value,None,size]
+    return 1
 
 def addLiteral(literal):
   if list(literalTable.keys()).count(literal) == 0:
@@ -25,12 +38,19 @@ def addLiteral(literal):
       #throw invalid literal error
       literalTable[literal] = [0,None,12]
       return 0
+    if int(value) >= 256:
+      errorTable.append([lineNum,"1 byte literal overflow"])
     literalTable[literal] = [int(value),None,12]
+
   return 1
 
 def extractOpcode(lineNum,line):
   # print(line)
   tokens = line.upper().split()
+
+  # if tokens.count('CLA') + tokens.count('LAC') + tokens.count('SAC') + tokens.count('ADD') + tokens.count('SUB') + tokens.count('BRZ') + tokens.count('BRN') + tokens.count('BRP') + tokens.count('INP') + tokens.count('DSP') + tokens.count('MUL') + tokens.count('DIV') + tokens.count('STP') + tokens.count('DW') > 1:
+  #   errorTable.append([lineNum, "Opcode is a reserved keyword; cannot be used as symbol"])
+
   if tokens.count('CLA') == 1:
     addOpcode('CLA','0000',12,0)
   elif tokens.count('LAC') == 1:
@@ -62,7 +82,13 @@ def extractOpcode(lineNum,line):
     if variable == None:
       #throw unknown opcode error; handled in pass 2
       return
-    addSymbol(variable,value,size)
+    i = addSymbol(variable,value,size)
+    if i == 0:
+      errorTable.append([lineNum,"Symbol has been defined more than once"])
+    elif i == 2:
+      errorTable.append([lineNum,"Label cannot be used as a variable"])
+    elif i == 3:
+      errorTable.append([lineNum,label + " is a Reserved keyword; Cannot be declared as Variable"])
 
 def extractLiteral(lineNum,line):
   tokens = line.split()
@@ -87,7 +113,7 @@ def checkPseudoinstruction(lineNum,line):
     return None, None, None
   if i > 1 or len(tokens) > 3:
     #throw too many opcodes or operands error;
-    errorTable.append([lineNum,"Too many operands"])
+    errorTable.append([lineNum,"Too many opcodes or operands"])
   variable = tokens[0].strip()
   if variable.isdigit():
     errorTable.append([lineNum,"Variable cannot be a numeric value or start with a digit"])
@@ -98,6 +124,8 @@ def checkPseudoinstruction(lineNum,line):
       errorTable.append([lineNum,"Wrong operand type; Only numeric values permitted"])
       #throw wrong operand error
       value = 0
+  if int(value) >= 256:
+    errorTable.append([lineNum,"1 byte datatype overflow"])
   # elif len(tokens) == 2:
   #   value = 0
   return variable, int(value), 12
@@ -125,9 +153,13 @@ def isDuplicateLabel(label):
 
 def assignAddressToVariablesAndLiterals(LC):
   for i in symbolTable:
+    if LC >= 256:
+      errorTable.append([-1,"Address overflow"])
     symbolTable[i][1] = LC
     LC += symbolTable[i][2]
   for i in literalTable:
+    if LC >= 256:
+      errorTable.append([-1,"Address overflow"])
     literalTable[i][1] = LC
     LC += literalTable[i][2]
 
@@ -137,14 +169,21 @@ def passOne():
   cleanedCode = []
 
   for lineNum,line in code:
-    # lineCtr += 1
+    if locationCounter >= 256:
+      errorTable.append([lineNum,"Address overflow"])
     if isComment(line):
       continue
     line = removeComment(line)
     # print(line)
     label, line = checkLabel(line)
     if label != '':
-      addLabel(label,locationCounter)
+      i = addLabel(label,locationCounter)
+      if i == 0:
+        errorTable.append([lineNum,"Label has been defined more than once"])
+      elif i == 2:
+        errorTable.append([lineNum,"Variable cannot be used as a Label"])
+      elif i == 3:
+        errorTable.append([lineNum,label + " is a Reserved keyword; Cannot be used as Label"])
     cleanedCode.append([lineNum,line])
     extractOpcode(lineNum,line)
     extractLiteral(lineNum,line)
@@ -156,6 +195,8 @@ def passOne():
 def passTwo():
   for lineNum,line in code:
     separate=line.split()
+    # if len(separate) > 1 and separate[1] in reservedKeywords:
+    #   errorTable.append([lineNum, separate[1] + " is a reserved keyword; cannot be used as symbol"])
     if separate[0] in opcodeTable.keys():
       temp=opcodeTable[separate[0]]
       mcode.append(temp[0])
@@ -185,15 +226,19 @@ def passTwo():
             mcode[-1]+=addr
           else:
             # print(separate[1])
-            errorTable.append([lineNum,separate[1]+" Symbol used but not defined"])
+            # print(symbolTable.keys())
+            if separate[1] not in reservedKeywords:
+              errorTable.append([lineNum,separate[1]+" Symbol used but not defined"])
+            else:
+              errorTable.append([lineNum,separate[1]+" is a Reserved keyword; Cannot be used as Variable"])
             # throw symbol not found exception
         elif(len(separate)<2):
-          errorTable.append([lineNum,"Operands Needed:1; Given:"+str(len(separate)-1)])
+          errorTable.append([lineNum,"Too less Operands; Needed:1; Given:"+str(len(separate)-1)])
           pass
           # throw too less operands exception
         else:
           pass
-          errorTable.append([lineNum,"Too less Operands; Needed:1; Given:"+str(len(separate)-1)])
+          errorTable.append([lineNum,"Too many Operands; Needed:1; Given:"+str(len(separate)-1)])
           #throw too many operands exception
       if(temp[2]==0):
         mcode[-1]+='00000000'
@@ -201,14 +246,15 @@ def passTwo():
           errorTable.append([lineNum,"Too many Operands; Needed:0; Given:"+str(len(separate)-1)])
           # throw too many operands exception
           pass
-    elif separate[0] in symbolTable.keys():
+    elif separate[0] in symbolTable.keys() or separate[0] in labelTable.keys():
       pass
     else:
-      errorTable.append([lineNum,separate[0]+" is an invalid Opcode"])
+      errorTable.append([lineNum,separate[0]+" Opcode used is not a legal Opcode"])
       pass
   file=open("bin.txt","w+")
 
   if len(errorTable)>0:
+    errorTable.sort()
     for e in errorTable:
       print("Error at Line "+str(e[0])+": "+e[1]+"\n")
       file.write("Error at Line "+str(e[0])+": "+e[1]+"\n")
@@ -231,10 +277,14 @@ opcodeTable = {} #Table that stores opcodes occuring in the program in format { 
 # Instruction class = 0 for 0 operand Instructions and 1 for Instructions with one operand
 literalTable = {}
 
+reservedKeywords = ['CLA','LAC','SAC','ADD','SUB','BRZ','BRN', 'BRP','INP', 'DSP', 'MUL', 'DIV', 'STP', 'DW']
+
 # hasError.append(False)
 i = 0
 for line in sys.stdin:
   i+=1
+  if not line.strip():
+    continue
   code.append([i,line.strip()])
   # hasError.append(False)
 

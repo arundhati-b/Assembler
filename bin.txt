@@ -1,1 +1,5 @@
-Error at Line 15: Too many operands
+Error at Line 2: I Symbol used but not defined
+Error at Line 5: I Symbol used but not defined
+Error at Line 8: BRZ is a Reserved keyword; Cannot be used as Variable
+Error at Line 11: CLA is a Reserved keyword; Cannot be used as Label
+Error at Line 15: Too many Operands; Needed:1; Given:2
