@@ -294,7 +294,7 @@ for line in sys.stdin:
     for x in reservedKeywords[:-1]:
       # print(x)
       if line.upper().find(x) != -1:
-        print(x)
+        # print(x)
         y = True
         break
     if y:

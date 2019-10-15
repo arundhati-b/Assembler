@@ -1,14 +1,14 @@
 CLA
 INP I //adding stuffs
-// test comment with whitespaces; should be ignored
+    // test comment with whitespaces; should be ignored
 INP J
 LAC I
 SUB '=2'
 BRN L2
-DSP L
+DSP L1
 CLA
 BRZ L2
-L: DSP J
+L1: DSP J
 CLA
 BRZ L2
 L2: STP
