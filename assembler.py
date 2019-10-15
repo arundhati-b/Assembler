@@ -280,16 +280,31 @@ literalTable = {}
 reservedKeywords = ['CLA','LAC','SAC','ADD','SUB','BRZ','BRN', 'BRP','INP', 'DSP', 'MUL', 'DIV', 'STP', 'DW']
 
 # hasError.append(False)
+flag = False
 i = 0
 for line in sys.stdin:
   i+=1
   if not line.strip():
     continue
+  line = line.strip()
   code.append([i,line.strip()])
   # hasError.append(False)
+  if flag:
+    y = False
+    for x in reservedKeywords[:-1]:
+      # print(x)
+      if line.upper().find(x) != -1:
+        print(x)
+        y = True
+        break
+    if y:
+      errorTable.append([i,"STP should be the last instruction in the code"])
+  if line.upper().find("STP") != -1:
+    flag = True
 
-if code[-1][1].upper().find("STP") == -1:
-  errorTable.append([code[-1][0],"STP should be the last instruction in the code"])
+
+# if code[-1][1].upper().find("STP") == -1:
+#   errorTable.append([code[-1][0],"STP should be the last instruction in the code"])
 
 
 # lineCtr = 0

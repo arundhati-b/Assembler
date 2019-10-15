@@ -1,5 +1,13 @@
-Error at Line 2: I Symbol used but not defined
-Error at Line 5: I Symbol used but not defined
-Error at Line 8: BRZ is a Reserved keyword; Cannot be used as Variable
-Error at Line 11: CLA is a Reserved keyword; Cannot be used as Label
-Error at Line 15: Too many Operands; Needed:1; Given:2
+000000000000
+100011000000
+100010110100
+000111000000
+010011001100
+011010010000
+100101101100
+000000000000
+010110010000
+100110110100
+000000000000
+010110010000
+110000000000

@@ -30,12 +30,15 @@ Output code will appear in file `bin.txt`
 `DIV` Divide accumulator contents by address content. Quotient in R1 and remainder in R2  
 `STP` Stop execution  
 
+  `STP` should be the last instruction in the program (followed only by variable declarations, if any). Variables can be declared anywhere in the program.
+
 #### Comments
 Precede the comment by `//`
 ```
 //This is a comment
 CLA // CLears Accumulator
 ```
+**Only single line comments supported. For multiline commenting precede each line by `//`**
 
 #### Labels
 Follow label name by a `:`
@@ -90,4 +93,4 @@ The code can handle the following errors:
   Labels and variables are replaced by their memory addresses and opcodes are replaced by their corresponding 4-bit binary codes.
 
 ##### Errors
-  Errors are added to a list as they are encountered so that the program does not termiate after encountering one error and all errors can be displayed together.
+  Errors are added to a list as they are encountered so that the program does not termiate after encountering just one error. Instead, all errors are displayed together.
